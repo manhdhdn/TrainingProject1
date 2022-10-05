@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Training_Project_1.Models
 {
@@ -15,15 +16,15 @@ namespace Training_Project_1.Models
         public string PhoneNumber { get; set; } = null!;
         [StringLength(50)]
         public string Email { get; set; } = null!;
-        public string Address { get; set; } = null!;
+        public string? Address { get; set; } = null!;
         public bool Status { get; set; }
-        public byte[] CV { get; set; } = null!;
+        public byte[]? CV { get; set; } = null!;
 
         [ForeignKey("Nominee")]
         public string NomineeID { get; set; } = null!;
-        public virtual Nominee Nominee { get; set; } = null!;
+        public virtual Nominee? Nominee { get; set; }
         [ForeignKey("Role")]
         public string RoleID { get; set; } = null!;
-        public virtual Role Role { get; set; } = null!; 
+        public virtual Role? Role { get; set; }
     }
 }

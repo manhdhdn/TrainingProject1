@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Training_Project_1.Models;
@@ -15,10 +11,13 @@ namespace Training_Project_1.Controllers
     public class RolesController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public RolesController(DataContext context)
+        public RolesController(DataContext context,
+                               RoleManager<IdentityRole> roleManager)
         {
             _context = context;
+            _roleManager = roleManager;
         }
 
         // GET: api/Roles
@@ -42,81 +41,83 @@ namespace Training_Project_1.Controllers
             return role;
         }
 
-        // PUT: api/Roles/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(string id, Role role)
-        {
-            if (id != role.RoleID)
-            {
-                return BadRequest();
-            }
+        //// PUT: api/Roles/5
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutRole(string id, Role role)
+        //{
+        //    if (id != role.RoleID)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(role).State = EntityState.Modified;
+        //    _context.Entry(role).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!RoleExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        // POST: api/Roles
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
-        {
-            _context.Roles.Add(role);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (RoleExists(role.RoleID))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+        //// POST: api/Roles
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        //[HttpPost]
+        //public async Task<ActionResult<Role>> PostRole(Role role)
+        //{
+        //    role.RoleID = Guid.NewGuid().ToString();
+        //    _context.Roles.Add(role);
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //        await _roleManager.CreateAsync(new IdentityRole(role.RoleName));
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        if (RoleExists(role.RoleID))
+        //        {
+        //            return Conflict();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            return CreatedAtAction("GetRole", new { id = role.RoleID }, role);
-        }
+        //    return CreatedAtAction("GetRole", new { id = role.RoleID }, role);
+        //}
 
-        // DELETE: api/Roles/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRole(string id)
-        {
-            var role = await _context.Roles.FindAsync(id);
-            if (role == null)
-            {
-                return NotFound();
-            }
+        //// DELETE: api/Roles/5
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteRole(string id)
+        //{
+        //    var role = await _context.Roles.FindAsync(id);
+        //    if (role == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Roles.Remove(role);
-            await _context.SaveChangesAsync();
+        //    _context.Roles.Remove(role);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
-        private bool RoleExists(string id)
-        {
-            return _context.Roles.Any(e => e.RoleID == id);
-        }
+        //private bool RoleExists(string id)
+        //{
+        //    return _context.Roles.Any(e => e.RoleID == id);
+        //}
     }
 }

@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Training_Project_1.Models.Context
 {
-    public partial class DataContext : DbContext
+    public partial class DataContext : IdentityDbContext<IdentityUser>
     {
         public DataContext()
         {

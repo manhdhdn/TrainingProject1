@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace Training_Project_1.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class PostNomineesController : ControllerBase
     {
         private readonly DataContext _context;
@@ -22,6 +24,7 @@ namespace Training_Project_1.Controllers
         }
 
         // GET: api/PostNominees
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostNominee>>> GetPostNominees()
         {
@@ -29,6 +32,7 @@ namespace Training_Project_1.Controllers
         }
 
         // GET: api/PostNominees/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<PostNominee>> GetPostNominee(int id)
         {
