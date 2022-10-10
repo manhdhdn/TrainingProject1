@@ -20,5 +20,6 @@ namespace Training_Project_1.Models.Context
         public virtual DbSet<Nominee> Nominees { get; set; } = null!;
         public virtual DbSet<Post> Posts { get; set; } = null!;
         public virtual DbSet<PostNominee> PostNominees { get; set; } = null!;
+        public virtual DbSet<Application> Applications { get; set; } = null!;
     }
 }

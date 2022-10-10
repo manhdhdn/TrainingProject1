@@ -235,6 +235,32 @@ namespace Training_Project_1.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Applications",
+                columns: table => new
+                {
+                    ApplicationID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    UserID = table.Column<string>(type: "nvarchar(36)", nullable: false),
+                    PostID = table.Column<string>(type: "nvarchar(36)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Applications", x => x.ApplicationID);
+                    table.ForeignKey(
+                        name: "FK_Applications_Posts_PostID",
+                        column: x => x.PostID,
+                        principalTable: "Posts",
+                        principalColumn: "PostID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Applications_Users_UserID",
+                        column: x => x.UserID,
+                        principalTable: "Users",
+                        principalColumn: "UserID");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PostNominees",
                 columns: table => new
                 {
@@ -258,6 +284,16 @@ namespace Training_Project_1.Migrations
                         principalColumn: "PostID",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Applications_PostID",
+                table: "Applications",
+                column: "PostID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Applications_UserID",
+                table: "Applications",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -326,6 +362,9 @@ namespace Training_Project_1.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Applications");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

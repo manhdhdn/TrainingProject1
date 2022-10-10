@@ -70,7 +70,7 @@ namespace Training_Project_1.Repositories
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(3),
+                expires: DateTime.Now.AddDays(5),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSignKey, SecurityAlgorithms.HmacSha256Signature)
                 );

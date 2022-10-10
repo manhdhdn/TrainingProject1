@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 
-//Swagger (API friendly view) and author test for BE
+// Swagger (API friendly view) and author test for BE
 builder.Services.AddSwaggerGen(option =>
 {
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -29,11 +29,15 @@ builder.Services.AddSwaggerGen(option =>
     option.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
     option.OperationFilter<AuthorizationOperationFilter>();
 });
+
+// Add identity database
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
+
+// Add and config JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -52,7 +56,20 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
     };
 });
+
+// Add transient, cope here
 builder.Services.AddTransient<IAccountRepo, AccountRepo>();
+
+// Actitvity timeout 5 days (default for 14 days)
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.ExpireTimeSpan = TimeSpan.FromDays(5);
+    options.SlidingExpiration = true;
+});
+
+// All data protection token lifespans
+builder.Services.Configure<DataProtectionTokenProviderOptions>(options =>
+       options.TokenLifespan = TimeSpan.FromHours(3));
 
 var app = builder.Build();
 

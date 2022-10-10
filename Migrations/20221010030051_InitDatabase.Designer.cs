@@ -12,7 +12,7 @@ using Training_Project_1.Models.Context;
 namespace Training_Project_1.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20221005024753_InitDatabase")]
+    [Migration("20221010030051_InitDatabase")]
     partial class InitDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -222,6 +222,34 @@ namespace Training_Project_1.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Training_Project_1.Models.Application", b =>
+                {
+                    b.Property<int>("ApplicationID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApplicationID"), 1L, 1);
+
+                    b.Property<string>("PostID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(36)");
+
+                    b.HasKey("ApplicationID");
+
+                    b.HasIndex("PostID");
+
+                    b.HasIndex("UserID");
+
+                    b.ToTable("Applications");
+                });
+
             modelBuilder.Entity("Training_Project_1.Models.Nominee", b =>
                 {
                     b.Property<string>("NomineeID")
@@ -426,6 +454,25 @@ namespace Training_Project_1.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Training_Project_1.Models.Application", b =>
+                {
+                    b.HasOne("Training_Project_1.Models.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Training_Project_1.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Training_Project_1.Models.Post", b =>
