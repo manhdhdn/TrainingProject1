@@ -1,11 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Text;
 using Training_Project_1.Models;
 using Training_Project_1.Models.ContactModels;
 using Training_Project_1.Models.Context;
 using Training_Project_1.Repositories;
+using Training_Project_1.Services;
 
 namespace Training_Project_1.Controllers
 {
@@ -15,14 +23,17 @@ namespace Training_Project_1.Controllers
     {
         private readonly DataContext _context;
         private readonly IAccountRepo _accountRepo;
+        private readonly IEmailSender _emailSender;
         private readonly UserManager<IdentityUser> _userManager;
 
         public UsersController(DataContext context,
                                IAccountRepo accountRepo,
+                               IEmailSender emailSender,
                                UserManager<IdentityUser> userManager)
         {
             _context = context;
             _accountRepo = accountRepo;
+            _emailSender = emailSender;
             _userManager = userManager;
         }
 
@@ -93,7 +104,7 @@ namespace Training_Project_1.Controllers
                     ModelState.AddModelError(error.Code, error.Description);
                 }
 
-                return ValidationProblem(ModelState);
+                return ValidationProblem();
             }
 
             signUpModel.User.UserID = Guid.NewGuid().ToString();
@@ -114,7 +125,7 @@ namespace Training_Project_1.Controllers
                 }
             }
 
-            return await SignIn(new SignInModel() { Email = signUpModel.User.Email, Password = signUpModel.Password });
+            return CreatedAtAction("SignUp", signUpModel.User.Email);
         }
 
         [HttpPost("SignIn")]
@@ -127,13 +138,63 @@ namespace Training_Project_1.Controllers
                 return Unauthorized();
             }
 
-            var user = _context.Users.First(u => u.Email == signInModel.Email);
+            if (token.Contains(' '))
+            {
+                return ValidationProblem(token, null, 401, "Unauthorized");
+            }
+
+            var user = await _context.Users.FirstAsync(u => u.Email == signInModel.Email);
 
             return Ok(new
             {
                 user,
                 token
             });
+        }
+
+        [HttpPost("RequestConfirmEmail")]
+        public async Task<IActionResult> RequestConfirmEmail([FromBody, EmailAddress] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return BadRequest();
+            }
+
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+            var url = Url.Action("ConfirmEmail", "Users", new { code, userID = user.Id }, Request.Scheme);
+            var message = "Plaese confirm your email by <a href=\"" + url + "\">clicking here</a>";
+
+            var response = await _emailSender.SendEmailAsync(email, "Confirm your email on Training Project 1", message);
+
+            return response.IsSuccessStatusCode ? Ok() : Problem("Failed to send email.");
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        public async Task<IActionResult> ConfirmEmail(string code, string userID)
+        {
+            var user = await _userManager.FindByIdAsync(userID);
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var results = (await _userManager.ConfirmEmailAsync(user, code)).Errors;
+
+            if (results.Any())
+            {
+                foreach (var result in results)
+                {
+                    ModelState.AddModelError(result.Code, result.Description);
+                }
+
+                return ValidationProblem();
+            }
+
+            return Ok();
         }
 
         //// DELETE: api/Users/5

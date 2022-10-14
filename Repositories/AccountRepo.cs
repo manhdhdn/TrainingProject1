@@ -46,13 +46,13 @@ namespace Training_Project_1.Repositories
             return result;
         }
 
-        public async Task<string?> SignIn([FromBody] string email, string password)
+        public async Task<string?> SignIn(string email, string password)
         {
             var result = await _signInManager.PasswordSignInAsync(email, password, false, false);
 
             if (!result.Succeeded)
             {
-                return null;
+                return result.IsNotAllowed ? "Require Confirmed Account" : null;
             }
 
             var user = await _userManager.FindByEmailAsync(email);

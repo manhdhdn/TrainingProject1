@@ -8,6 +8,7 @@ using System.Text;
 using Training_Project_1.Filter;
 using Training_Project_1.Models.Context;
 using Training_Project_1.Repositories;
+using Training_Project_1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,7 @@ builder.Services.AddSwaggerGen(option =>
 // Add identity database
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<DataContext>()
                 .AddDefaultTokenProviders();
 
@@ -59,6 +60,8 @@ builder.Services.AddAuthentication(options =>
 
 // Add transient, cope here
 builder.Services.AddTransient<IAccountRepo, AccountRepo>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 // Actitvity timeout 5 days (default for 14 days)
 builder.Services.ConfigureApplicationCookie(options =>
@@ -86,11 +89,10 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseStaticFiles();
 app.UseRouting();
-
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
