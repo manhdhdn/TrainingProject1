@@ -197,6 +197,38 @@ namespace Training_Project_1.Controllers
             return Ok();
         }
 
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel changePasswordModel)
+        {
+            var user = await _userManager.FindByEmailAsync(changePasswordModel.Email);
+            var results = (await _userManager.ChangePasswordAsync(user, changePasswordModel.OldPassword, changePasswordModel.NewPassword)).Errors;
+
+            if (results.Any())
+            {
+                foreach (var result in results)
+                {
+                    ModelState.AddModelError(result.Code, result.Description);
+                }
+
+                return ValidationProblem();
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("RequestResetPassword")]
+        public async Task<IActionResult> RequestResetPassword([FromBody, EmailAddress] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok();
+        }
+
         //// DELETE: api/Users/5
         //[HttpDelete("{id}")]
         //public async Task<IActionResult> DeleteUser(string id)

@@ -1,59 +1,50 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
 
-export class FetchData extends Component {
-  static displayName = FetchData.name;
+export function FetchData() {
+    const [loading, setLoad] = useState(true);
+    const [roles, setRoles] = useState([]);
 
-  constructor(props) {
-    super(props);
-    this.state = { forecasts: [], loading: true };
-  }
+    useEffect(() => {
+        populateRoleData();
 
-  componentDidMount() {
-    this.populateWeatherData();
-  }
+        async function populateRoleData() {
+            const response = await fetch('api/roles');
+            const data = await response.json();
+            setRoles(data);
+            setLoad(false);
+        };
+    }, []);
 
-  static renderForecastsTable(forecasts) {
-    return (
-      <table className='table table-striped' aria-labelledby="tabelLabel">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.date}>
-              <td>{forecast.date}</td>
-              <td>{forecast.temperatureC}</td>
-              <td>{forecast.temperatureF}</td>
-              <td>{forecast.summary}</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    );
-  }
+    const renderRolesTable = () => {
+        return (
+            <table className='table table-striped' aria-labelledby="tabelLabel">
+                <thead>
+                    <tr>
+                        <th>Role ID</th>
+                        <th>Role Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {roles.map(role =>
+                        <tr key={role.roleID}>
+                            <td>{role.roleID}</td>
+                            <td>{role.roleName}</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        );
+    }
 
-  render() {
-    let contents = this.state.loading
-      ? <p><em>Loading...</em></p>
-      : FetchData.renderForecastsTable(this.state.forecasts);
+    let contents = loading
+        ? <p><em>Loading...</em></p>
+        : renderRolesTable();
 
     return (
-      <div>
-        <h1 id="tabelLabel" >Weather forecast</h1>
-        <p>This component demonstrates fetching data from the server.</p>
-        {contents}
-      </div>
+        <div>
+            <h1 id="tabelLabel" >Role</h1>
+            <p>This component demonstrates fetching data from the server.</p>
+            {contents}
+        </div>
     );
-  }
-
-  async populateWeatherData() {
-    const response = await fetch('weatherforecast');
-    const data = await response.json();
-    this.setState({ forecasts: data, loading: false });
-  }
 }

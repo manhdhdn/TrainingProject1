@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Training_Project_1.Models;
 using Training_Project_1.Models.Context;
+using Training_Project_1.Repositories;
 
 namespace Training_Project_1.Controllers
 {
@@ -26,9 +27,17 @@ namespace Training_Project_1.Controllers
         // GET: api/Posts
         [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
+        public async Task<ActionResult<PagedRepo<Post>>> GetPosts(decimal? salary, int? pageIndex, int? pageSize)
         {
-            return await _context.Posts.ToListAsync();
+            var source = _context.Posts.AsQueryable();
+
+            if (salary != null)
+            {
+                decimal about = 1000000;
+                source = source.Where(p => p.Salary < salary + about && p.Salary > salary - about);
+            }
+
+            return await PagedRepo<Post>.PagingAsync(source, pageIndex ?? 1, pageSize ?? 8);
         }
 
         // GET: api/Posts/5
