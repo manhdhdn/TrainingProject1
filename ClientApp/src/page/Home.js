@@ -16,7 +16,7 @@ const Home = () => {
             <Routes>
                 <Route exact path="/" element={<Main/>}/>
                 <Route exact path='/job' element = {<Job/>}/>
-                <Route exact path='/detail/:id' element = {<Detail/>}/>
+                <Route exact path='/detail' element = {<Detail/>}/>
                 <Route exact path='/apply' element = {<Apply/>}/>
             </Routes>
             <Footer />

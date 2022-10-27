@@ -61,7 +61,7 @@ const Job = () => {
                             </div>
                             <div className='col-md-7'>
                                 <JobTitle>
-                                    <Link to={'/detail/:id'} className='job-title'>Làm gái</Link>
+                                    <Link to={'/detail'} className='job-title'>Làm gái</Link>
                                 </JobTitle>
 
                                 <Day>
@@ -108,7 +108,7 @@ const Job = () => {
                             </div>
                             <div className='col-md-7'>
                                 <JobTitle>
-                                    <Link to={'/detail/:id'} className='job-title'>Làm gái</Link>
+                                    <Link to={'/detail'} className='job-title'>Làm gái</Link>
                                 </JobTitle>
 
                                 <Day>
