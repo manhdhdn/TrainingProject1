@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BsFillBriefcaseFill } from "react-icons/bs"
 import { BsCurrencyDollar } from 'react-icons/bs'
@@ -7,31 +7,45 @@ import { Link } from 'react-router-dom'
 import './style.css'
 const Job = () => {
 
+    const [data, setData] = useState([]);
+    const [filter, setFilter] = useState(data);
+    useEffect(() => {
+        const getJob = async () => {
+            const response = await fetch('api/Posts');
+            setData(await response.json());
+            setFilter(await response.json());
+        };
+        getJob();
+    }, []);
+    const filterSearchJob = (input) => {
+        const updateList = data.filter((x) => {
+            return x.title.toLowerCase().includes(input);
+        });
+        setFilter(updateList);
+    };
+    const [inputsearch, setInputsearch] = useState('');
 
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            filterSearchJob(inputsearch);
+        }
+    };
     return (
         <div className='container'>
             <Search className='row justify-content-around'>
                 <div className='col-md-4'>
-                    <SearchKey placeholder='Ban muon tim viec gi' />
+                    <SearchKey
+                        className="search__input"
+                        type="text"
+                        value={inputsearch}
+                        onChange={(e) => setInputsearch(e.target.value.toLowerCase())}
+                        onKeyPress={handleKeyPress}
+                        placeholder='Ban muon tim viec gi' />
                 </div>
-                <div className='col-md-3'>
-                    <Jobcate id="jobcate">
-                        <option value="Nhom dung duong">Nhom dung duong</option>
-                        <option value="Nhom khach san">Nhom dung duong</option>
-                        <option value="Nhom kieu nu">Nhom kieu nu</option>
-                        <option value="Nhom dai gia" selected>Tat ca nganh nghe</option>
-                    </Jobcate>
-                </div>
-                <div className='col-md-3'>
-                    <LocationDo id="joblocation">
-                        <option value="Nhom dung duong">Nhom dung duong</option>
-                        <option value="Nhom khach san">Nhom dung duong</option>
-                        <option value="Nhom kieu nu">Nhom kieu nu</option>
-                        <option value="Nhom dai gia" selected>Tat ca nganh nghe</option>
-                    </LocationDo>
-                </div>
+
+
                 <div className='col-md-1'>
-                    <SearchButton>Tìm việc</SearchButton>
+                    <SearchButton onClick={() => filterSearchJob(inputsearch)}>Tìm việc</SearchButton>
                 </div>
 
             </Search>
@@ -39,111 +53,70 @@ const Job = () => {
                 <div className='col-sm-4'>
                     <Count>Tìm thấy 30 việc làm phù hợp</Count>
                 </div>
-                <div className='col-sm-4'>
-                    <span>Xếp theo: </span>
-                    <Sort id="joblocation">
-                        <option value="Nhom dung duong"></option>
-                        <option value="Nhom khach san">Nhom dung duong</option>
-                        <option value="Nhom kieu nu">Nhom kieu nu</option>
-                        <option value="Nhom dai gia" selected>Độ ưu tiên</option>
-                    </Sort>
-                </div>
             </CountResult>
             <div className='row justify-content-around'>
-                <ContainerJob className='col-xl-5'>
-                    <div className='container'>
-                        <div className='row justify-content-around'>
-                            <div className='col-md-3'>
-                                <Img src='https://webdevproof.com/theme-forest-demo/job/demo-1-en/assets/images/icons/12.png' />
-                                <Jobtype>
-                                    Full time
-                                </Jobtype>
-                            </div>
-                            <div className='col-md-7'>
-                                <JobTitle>
-                                    <Link to={'/detail'} className='job-title'>Làm gái</Link>
-                                </JobTitle>
+                {
+                    filter.length == 0 ? (
+                        <h3 className="mt-4 mg-b4">
+                            {' '}
+                            Sorry! We don't have the product that you were looking for ^-^
+                        </h3>
+                    ) : (
+                        <>
+                            {
+                                filter.map((job) => {
+                                    <ContainerJob key={job.postID} className='col-xl-5'>
+                                        <div className='container'>
+                                            <div className='row justify-content-around'>
+                                                <div className='col-md-3'>
+                                                    <Img src='https://webdevproof.com/theme-forest-demo/job/demo-1-en/assets/images/icons/12.png' />
+                                                    <Jobtype>
+                                                        Full time
+                                                    </Jobtype>
+                                                </div>
+                                                <div className='col-md-7'>
+                                                    <JobTitle>
+                                                        <Link to={'/detail'} className='job-title'>{job.title}</Link>
+                                                    </JobTitle>
 
-                                <Day>
-                                    April 3, 2018
-                                </Day>
-                                <ul>
-                                    <li>
-                                        <SpanIcon_1>
-                                            <BsFillBriefcaseFill />
-                                        </SpanIcon_1>
-                                        <SpanBody>
-                                            Intel Technologies
-                                        </SpanBody>
-                                    </li>
-                                    <li>
-                                        <SpanIcon_2>
-                                            <BsCurrencyDollar />
-                                        </SpanIcon_2>
-                                        <SpanBody>
-                                            2500-3000
-                                        </SpanBody>
-                                    </li>
-                                    <li>
-                                        <SpanIcon_3>
-                                            <BsPinMapFill />
-                                        </SpanIcon_3>
-                                        <SpanBody>
-                                            Viet Nam
-                                        </SpanBody>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </ContainerJob>
-                <ContainerJob className='col-xl-5'>
-                    <div className='container'>
-                        <div className='row justify-content-around'>
-                            <div className='col-md-3'>
-                                <Img src='https://webdevproof.com/theme-forest-demo/job/demo-1-en/assets/images/icons/12.png' />
-                                <Jobtype>
-                                    Full time
-                                </Jobtype>
-                            </div>
-                            <div className='col-md-7'>
-                                <JobTitle>
-                                    <Link to={'/detail'} className='job-title'>Làm gái</Link>
-                                </JobTitle>
-
-                                <Day>
-                                    April 3, 2018
-                                </Day>
-                                <ul>
-                                    <li>
-                                        <SpanIcon_1>
-                                            <BsFillBriefcaseFill />
-                                        </SpanIcon_1>
-                                        <SpanBody>
-                                            Intel Technologies
-                                        </SpanBody>
-                                    </li>
-                                    <li>
-                                        <SpanIcon_2>
-                                            <BsCurrencyDollar />
-                                        </SpanIcon_2>
-                                        <SpanBody>
-                                            2500-3000
-                                        </SpanBody>
-                                    </li>
-                                    <li>
-                                        <SpanIcon_3>
-                                            <BsPinMapFill />
-                                        </SpanIcon_3>
-                                        <SpanBody>
-                                            Viet Nam
-                                        </SpanBody>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </ContainerJob>
+                                                    <Day>
+                                                        {job.postDate}
+                                                    </Day>
+                                                    <ul>
+                                                        <li>
+                                                            <SpanIcon_1>
+                                                                <BsFillBriefcaseFill />
+                                                            </SpanIcon_1>
+                                                            <SpanBody>
+                                                                Intel Technologies
+                                                            </SpanBody>
+                                                        </li>
+                                                        <li>
+                                                            <SpanIcon_2>
+                                                                <BsCurrencyDollar />
+                                                            </SpanIcon_2>
+                                                            <SpanBody>
+                                                                {job.salary}
+                                                            </SpanBody>
+                                                        </li>
+                                                        <li>
+                                                            <SpanIcon_3>
+                                                                <BsPinMapFill />
+                                                            </SpanIcon_3>
+                                                            <SpanBody>
+                                                               {job.address}
+                                                            </SpanBody>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ContainerJob>
+                                })
+                            }
+                        </>
+                    )
+                }
             </div>
         </ div>
     )

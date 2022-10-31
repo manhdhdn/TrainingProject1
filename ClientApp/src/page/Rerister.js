@@ -151,7 +151,7 @@ const Rerister = () => {
                                         <label htmlFor="Cv"> Upload Cv </label>
                                         <LabelForCV>
                                             <InputFile type="file" name="Cv" accept="application/pdf" />
-                                            Chọn file
+                                                Chọn file
                                         </LabelForCV>
                                         <ErrorMessage
                                             name="Cv"
@@ -159,7 +159,7 @@ const Rerister = () => {
                                             className="text-danger"
                                         />
                                     </div>
-                                    <div className="form-group" style={{ display: 'flex', justifyContent: 'center' }}>
+                                    <div className="form-group" style={{display:'flex', justifyContent:'center'}}>
                                         <RegisterButon type="submit" className="btn btn-primary">
                                             Register
                                         </RegisterButon>
