@@ -1,0 +1,10 @@
+.job-title {
+    text-decoration: none;
+    color: #3c3c3c;
+    font-size: 25px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.job-title :hover {
+    color: #50feb8;
+}

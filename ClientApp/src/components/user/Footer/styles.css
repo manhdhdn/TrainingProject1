@@ -1,0 +1,30 @@
+.footer h3 {
+    color: #fff;
+    font-size: 30px;
+    margin: 0 0 30px;
+    text-align: left;
+}
+.footer p {
+    color: #fff;
+    margin: 0 0 15px;
+    font-size: 20px;
+    text-align: start;
+}
+ul {
+    padding: 0px;
+}
+.list-style {
+    color: #fff;
+    text-decoration: none;
+    font-size: 25px;
+    font-weight: 500;
+    line-height: 26px;
+    display: inline-block;
+    margin: 15px auto;
+    
+}
+
+li {
+    list-style: none;
+    text-align: left;
+}
