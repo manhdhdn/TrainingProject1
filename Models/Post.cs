@@ -21,6 +21,6 @@ namespace Training_Project_1.Models
 
         [ForeignKey("User")]
         public string UserID { get; set; } = null!;
-        public virtual User User { get; set; } = null!;
+        public virtual User? User { get; set; }
     }
 }

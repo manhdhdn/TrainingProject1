@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Training_Project_1.Models.Context
 {
-    public partial class DataContext : DbContext
+    public partial class DataContext : IdentityDbContext<IdentityUser>
     {
         public DataContext()
         {
@@ -18,5 +20,6 @@ namespace Training_Project_1.Models.Context
         public virtual DbSet<Nominee> Nominees { get; set; } = null!;
         public virtual DbSet<Post> Posts { get; set; } = null!;
         public virtual DbSet<PostNominee> PostNominees { get; set; } = null!;
+        public virtual DbSet<Application> Applications { get; set; } = null!;
     }
 }
